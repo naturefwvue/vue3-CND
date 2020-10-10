@@ -7,187 +7,195 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>个人博客</title>
     <script src="https://unpkg.com/vue@next"></script>
-    <!-- 引入组件库 
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
-    <!-- 引入样式 
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
-    <script src="../script/antdv/antd.js"></script>
-    <link rel="stylesheet" href="../script/antdv/antd.css">
   </head>
   <body>
-    <div id="app">
-        <a-comment>
-            <template v-slot:actions>
-              <span key="comment-nested-reply-to">Reply to</span>
-            </template>
-            <template v-slot:author>
-              <a>Han Solo</a>
-            </template>
-            <template v-slot:avatar>
-              <a-avatar
-                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                alt="Han Solo"
-              />
-            </template>
-            <template v-slot:content>
-              <p>
-                We supply a series of design principles, practical patterns and high quality design
-                resources (Sketch and Axure).
-              </p>
-            </template>
-            <a-comment>
-              <template v-slot:actions>
-                <span>Reply to</span>
-              </template>
-              <template v-slot:author>
-                <a>Han Solo</a>
-              </template>
-              <template v-slot:avatar>
-                <a-avatar
-                  src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                  alt="Han Solo"
-                />
-              </template>
-              <template v-slot:content>
-                <p>
-                  We supply a series of design principles, practical patterns and high quality design
-                  resources (Sketch and Axure).
-                </p>
-              </template>
-              <a-comment>
-                <template v-slot:actions>
-                  <span>Reply to</span>
-                </template>
-                <template v-slot:author>
-                  <a>Han Solo</a>
-                </template>
-                <template v-slot:avatar>
-                  <a-avatar
-                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    alt="Han Solo"
-                  />
-                </template>
-                <template v-slot:content>
-                  <p>
-                    We supply a series of design principles, practical patterns and high quality design
-                    resources (Sketch and Axure).
-                  </p>
-                </template>
-              </a-comment>
-              <a-comment>
-                <template v-slot:actions>
-                  <span>Reply to</span>
-                </template>
-                <template v-slot:author>
-                  <a>Han Solo</a>
-                </template>
-                <template v-slot:avatar>
-                  <a-avatar
-                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    alt="Han Solo"
-                  />
-                </template>
-                <template v-slot:content>
-                  <p>
-                    We supply a series of design principles, practical patterns and high quality design
-                    resources (Sketch and Axure).
-                  </p>
-                </template>
-              </a-comment>
-            </a-comment>
-          </a-comment>
-    </div>
     <div id="bloglist">
-        <div>
-            <!--博文列表-->
-            博文列表<br>
-            {{list[0].title}}<br>
-            {{list[0].msg}}<br>
-            <a-button type="primary">
-                Primary33
-              </a-button>
-        </div>
-    </div>
-    <div id="counter">
-       
-        <div>
-            <!--博文详细-->
-            博文详细
-        </div>
-        <div>
-            <!--讨论列表-->
-            讨论列表
-        </div>
-          
-        Counter: {{ counter }}
+      <!--博文列表-->
+      <div style="border:1px solid #db820d;margin: 5px;padding: 3px;" v-for="(item,index) in blogList" :key="'bloglist'+index">
+        <span @click="showBlog()">{{item.title}}</span><br>
+        {{item.addTime}}<br>
+        {{item.introduction}}<br>
+        人气：{{item.viewCount}} 点赞：{{item.agreeCount}}<br>
       </div>
-    <!-- built files will be auto injected -->
-  <script type="text/javascript">
-    Vue.createApp({
-        data() {
-          return {
-            likes: 0,
-            dislikes: 0,
-            action: null
-          };
-        },
-        methods: {
-          like() {
-            this.likes = 1;
-            this.dislikes = 0;
-            this.action = 'liked';
-          },
-          dislike() {
-            this.likes = 0;
-            this.dislikes = 1;
-            this.action = 'disliked';
-          },
-        },
-        }).use(antd).mount('#app')
+      <input type="button" value="写博客" @click="showSendBlog" />
+    </div>
+    <div id="SendBlog">
+      <div v-show="isShow">
+        <!--发博客-->
+        发博客<br>
+        标题：<input v-model="blog.title" type="text"/> <br>
+        简介：<br><textarea v-model="blog.introduction"  cols="50" rows="5"></textarea> <br>
+        内容：<br><textarea v-model="blog.concent"  cols="50" rows="10"></textarea> <br>
+        <input type="button" value="提交博客" @click="submit">
+      </div>
+    </div>
 
+    <div id="blog">
+      <div v-show="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
+        <!--博文详细-->
+        {{blog.title}}<br>
+        {{blog.addTime}}<br>
+        <p v-html="blog.concent"></p>
+        {{blog.concent}}<br>
+        {{blog.viewCount}}<br>
+        {{blog.agreeCount}}<br>
+      </div>
+      <hr>
+      <div v-show="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;"
+          v-for="(item,index) in discussList" :key="'discusslist'+index">
+        <!--讨论列表-->
+        {{index+1}}楼：
+        {{item.discusser}} 在 {{item.addTime}} 说：<br>
+        <p v-html="item.concent"></p>
+        点赞：{{item.agreeCount}}<br>
+      </div>
+      <div v-show="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
+        发讨论<br>
+        昵称：<input v-model="discuss.discusser" type="text"/> <br>
+        内容：<textarea v-model="discuss.concent" cols="50" rows="5"></textarea> <br>
+        <input type="button" value="提交讨论" @click="submit">
+      </div>
+    </div>
+ 
+  <script type="text/javascript">
+    // 博文列表
     const BlogList = {
-        data() {
-            return {
-                list:[
-                    {
-                        title: '这是一个博客',
-                        msg: '这是博客简介'
-                    }
-                ]
+      data() {
+        return {
+          blogList:[ // 演示数据
+            {
+              title: '这是一个博客',
+              addTime: '2020-10-15',
+              introduction: '这是博客简介',
+              viewCount: 1,
+              agreeCount: 1
+            },
+            {
+              title: '这是第二个博客',
+              addTime: '2020-10-16',
+              introduction: '这还是博客的简介',
+              viewCount: 1,
+              agreeCount: 1
             }
+          ]
+        }
+      },
+      methods: {
+        showSendBlog() {
+          // 显示写博文的div
+          vmBlog.isShow = false
+          vmSendBlog.isShow = true
         },
-        methods: {
-          greet(event) {
-            // `this` 内部 `methods` 指向当前活动实例
-            // alert(antd)
-            // `event` 是原生 DOM event
-            if (event) {
-                alert(event.target.tagName)
-            }
+        showBlog() {
+          // 显示写博文和讨论的div
+          vmBlog.isShow = true
+          vmSendBlog.isShow = false
+        },
+        reload(newBlog) {
+          // 重新加载博文列表
+          console.log(this.blogList)
+          alert(newBlog.title)
+          this.blogList.push(newBlog)
+        },
+        greet(event) {
+          // `this` 内部 `methods` 指向当前活动实例
+          // alert(antd)
+          // `event` 是原生 DOM event
+          if (event) {
+              alert(event.target.tagName)
           }
         }
+      }
     }
-    Vue.createApp(BlogList).use(antd).mount('#bloglist')
+    const vmBlogList = Vue.createApp(BlogList).mount('#bloglist')
 
-    const Counter = {
-        mixins: [BlogList],
-        data() {
-            return {
-                counter: 0
-            }
-        },
-        mounted() {
-            setInterval(() => {
-                this.counter++
-            }, 100000)
-            this.greet();
+    // 发博文
+    const SendBlog = {
+      mixins: [BlogList],
+      data() {
+        return {
+          isShow:false,
+          blog:{  // 演示数据
+            title: '这是一个博客',
+            introduction: '这是博客的简介',
+            concent: '这是博客的详细内容<br>第二行'
+          } 
         }
+      },
+      methods: {
+        // 提交博文
+        submit(){
+          let newBlog = {
+            title: this.blog.title,
+            addTime: '2020-10-16',
+            introduction: this.blog.introduction,
+            viewCount: 1,
+            agreeCount: 1
+          }
+          // 调用 BlogList 的 reload 事件刷新博文列表
+          vmBlogList.reload(newBlog)
+        }
+      }
     }
-    Vue.createApp(Counter).mount('#counter')
+    const vmSendBlog = Vue.createApp(SendBlog).mount('#SendBlog')
 
-    Vue.createApp({}).component('my-component-name', {
-        
-    })
+    // 博文内容和讨论
+    const Blog = {
+      data() {
+        return {
+          isShow:false,
+          blog:{  // 演示数据
+            title: '这是一个博客',
+            addTime: '2020-10-15',
+            concent: '这是博客的详细内容<br>第二行',
+            viewCount: 1,
+            agreeCount: 1
+          },
+          discuss:{  // 演示数据
+            discusser: '这是一个博客',
+            concent: '这是博客的详细内容<br>第二行'
+          },
+          discussList:[  // 演示数据
+            {
+              discusser:'jyk',
+              addTime: '2020-10-15',
+              concent: '这个博客写的不错<br>第二行',
+              agreeCount: 1
+            },
+            {
+              discusser:'jyk',
+              addTime: '2020-10-15',
+              concent: '这也行？那我也能写<br>第二行',
+              agreeCount: 1
+            },
+            {
+              discusser:'jyk',
+              addTime: '2020-10-15',
+              concent: '对对，大家一起来写博客<br>第二行',
+              agreeCount: 1
+            }
+          ]
+        }
+      },
+      methods: {
+        // 提交讨论
+        submit(){
+          let newDiscuss = {
+            discusser: this.discuss.discusser,
+            addTime: '2020-10-16',
+            concent: this.discuss.concent,
+            agreeCount: 1
+          }
+          this.reload(newDiscuss)
+        },
+        reload(newDiscuss) {
+          // 重新加载讨论列表
+          this.discussList.push(newDiscuss)
+        }
+      }
+    }
+    const vmBlog = Vue.createApp(Blog).mount('#blog')
+ 
   </script>
 </body>
 </html>

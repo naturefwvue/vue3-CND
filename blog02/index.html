@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>个人博客</title>
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- 引入组件库 
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <!-- 引入样式 
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+    <script src="../script/antdv/antd.js"></script>
+    <link rel="stylesheet" href="../script/antdv/antd.css">
+  </head>
+  <body>
+    <div id="app">
+        <a-comment>
+            <template v-slot:actions>
+              <span key="comment-nested-reply-to">Reply to</span>
+            </template>
+            <template v-slot:author>
+              <a>Han Solo</a>
+            </template>
+            <template v-slot:avatar>
+              <a-avatar
+                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                alt="Han Solo"
+              />
+            </template>
+            <template v-slot:content>
+              <p>
+                We supply a series of design principles, practical patterns and high quality design
+                resources (Sketch and Axure).
+              </p>
+            </template>
+            <a-comment>
+              <template v-slot:actions>
+                <span>Reply to</span>
+              </template>
+              <template v-slot:author>
+                <a>Han Solo</a>
+              </template>
+              <template v-slot:avatar>
+                <a-avatar
+                  src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                  alt="Han Solo"
+                />
+              </template>
+              <template v-slot:content>
+                <p>
+                  We supply a series of design principles, practical patterns and high quality design
+                  resources (Sketch and Axure).
+                </p>
+              </template>
+              <a-comment>
+                <template v-slot:actions>
+                  <span>Reply to</span>
+                </template>
+                <template v-slot:author>
+                  <a>Han Solo</a>
+                </template>
+                <template v-slot:avatar>
+                  <a-avatar
+                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                    alt="Han Solo"
+                  />
+                </template>
+                <template v-slot:content>
+                  <p>
+                    We supply a series of design principles, practical patterns and high quality design
+                    resources (Sketch and Axure).
+                  </p>
+                </template>
+              </a-comment>
+              <a-comment>
+                <template v-slot:actions>
+                  <span>Reply to</span>
+                </template>
+                <template v-slot:author>
+                  <a>Han Solo</a>
+                </template>
+                <template v-slot:avatar>
+                  <a-avatar
+                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                    alt="Han Solo"
+                  />
+                </template>
+                <template v-slot:content>
+                  <p>
+                    We supply a series of design principles, practical patterns and high quality design
+                    resources (Sketch and Axure).
+                  </p>
+                </template>
+              </a-comment>
+            </a-comment>
+          </a-comment>
+    </div>
+    <div id="bloglist">
+        <div>
+            <!--博文列表-->
+            博文列表<br>
+            {{list[0].title}}<br>
+            {{list[0].msg}}<br>
+            <a-button type="primary">
+                Primary33
+              </a-button>
+        </div>
+    </div>
+    <div id="counter">
+       
+        <div>
+            <!--博文详细-->
+            博文详细
+        </div>
+        <div>
+            <!--讨论列表-->
+            讨论列表
+        </div>
+          
+        Counter: {{ counter }}
+      </div>
+    <!-- built files will be auto injected -->
+  <script type="text/javascript">
+    Vue.createApp({
+        data() {
+          return {
+            likes: 0,
+            dislikes: 0,
+            action: null
+          };
+        },
+        methods: {
+          like() {
+            this.likes = 1;
+            this.dislikes = 0;
+            this.action = 'liked';
+          },
+          dislike() {
+            this.likes = 0;
+            this.dislikes = 1;
+            this.action = 'disliked';
+          },
+        },
+        }).use(antd).mount('#app')
+
+    const BlogList = {
+        data() {
+            return {
+                list:[
+                    {
+                        title: '这是一个博客',
+                        msg: '这是博客简介'
+                    }
+                ]
+            }
+        },
+        methods: {
+          greet(event) {
+            // `this` 内部 `methods` 指向当前活动实例
+            // alert(antd)
+            // `event` 是原生 DOM event
+            if (event) {
+                alert(event.target.tagName)
+            }
+          }
+        }
+    }
+    Vue.createApp(BlogList).use(antd).mount('#bloglist')
+
+    const Counter = {
+        mixins: [BlogList],
+        data() {
+            return {
+                counter: 0
+            }
+        },
+        mounted() {
+            setInterval(() => {
+                this.counter++
+            }, 100000)
+            this.greet();
+        }
+    }
+    Vue.createApp(Counter).mount('#counter')
+
+    Vue.createApp({}).component('my-component-name', {
+        
+    })
+  </script>
+</body>
+</html>
+
