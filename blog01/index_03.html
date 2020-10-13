@@ -42,7 +42,7 @@
       </div>
       <hr>
       <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;"
-          v-for="(item,index) in discussList" :key="'discusslist'+index">
+          v-for="(item,index) in blog.discussList" :key="'discusslist'+index">
         <!--讨论列表-->
         {{index+1}}楼：
         {{item.discusser}} 在 {{item.addTime}} 说：<br>
@@ -145,48 +145,87 @@
       data() {
         return {
           isShow:false,
-          bolgId:1,
-          blog:{  // 演示数据
-            title: '这是一个博客',
-            addTime: '2020-10-15',
-            concent: '这是博客的详细内容<br>第二行',
+          bolgId:0,
+          discuss:{  // 绑定讨论表单
+            discusser: '', // 讨论人昵称
+            concent: '' // 讨论内容
+          },
+          blog:{
+            title: '加载中...',
+            addTime: '',
+            concent: '',
             viewCount: 1,
-            agreeCount: 1
+            agreeCount: 1,
+            discussList:[
+              {
+                discusser:'jyk1',
+                addTime: '2020-10-15',
+                concent: '这个博客写的不错<br>第二行',
+                agreeCount: 1
+              }
+            ]
           },
-          discuss:{  // 演示数据
-            discusser: '这是一个博客',
-            concent: '这是博客的详细内容<br>第二行'
-          },
-          discussList:[  // 演示数据
-            {
-              discusser:'jyk',
+          blogs:{
+            blog1:{  // 演示数据
+              title: '这是一个博客',
               addTime: '2020-10-15',
-              concent: '这个博客写的不错<br>第二行',
-              agreeCount: 1
+              concent: '这是博客的详细内容<br>第二行',
+              viewCount: 1,
+              agreeCount: 1,
+              discussList:[
+                {
+                  discusser:'jyk1',
+                  addTime: '2020-10-15',
+                  concent: '这个博客写的不错<br>第二行',
+                  agreeCount: 1
+                },
+                {
+                  discusser:'jyk1',
+                  addTime: '2020-10-15',
+                  concent: '这也行？那我也能写<br>第二行',
+                  agreeCount: 1
+                },
+                {
+                  discusser:'jyk1',
+                  addTime: '2020-10-15',
+                  concent: '对对，大家一起来写博客<br>第二行',
+                  agreeCount: 1
+                }
+              ]
             },
-            {
-              discusser:'jyk',
+            blog2:{  // 演示数据
+              title: '这是第二个博客',
               addTime: '2020-10-15',
-              concent: '这也行？那我也能写<br>第二行',
-              agreeCount: 1
-            },
-            {
-              discusser:'jyk',
-              addTime: '2020-10-15',
-              concent: '对对，大家一起来写博客<br>第二行',
-              agreeCount: 1
+              concent: '这是博客的详细内容<br>第二行',
+              viewCount: 1,
+              agreeCount: 1,
+              discussList:[
+                {
+                  discusser:'jyk2',
+                  addTime: '2020-10-15',
+                  concent: '这个博客写的不错<br>第二行',
+                  agreeCount: 1
+                },
+                {
+                  discusser:'jyk2',
+                  addTime: '2020-10-15',
+                  concent: '这也行？那我也能写<br>第二行',
+                  agreeCount: 1
+                }
+              ]
             }
-          ]
+          }
         }
       },
       created:function () {
         // 依据bolgId 获取博文内容和讨论列表
-        alert(this.bolgId)
+        // alert(this.bolgId)
       },
       watch: {
         bolgId: function(newId, oldId) {
           // 依据bolgId 获取博文内容和讨论列表
-          alert(newId)
+          // alert(newId)
+          this.blog = this.blogs['blog' + newId]
         }
       },
       methods: {
@@ -202,7 +241,7 @@
         },
         reload(newDiscuss) {
           // 重新加载讨论列表
-          this.discussList.push(newDiscuss)
+          this.blog.discussList.push(newDiscuss)
         }
       }
     }

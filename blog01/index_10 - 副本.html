@@ -5,21 +5,23 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>个人博客</title>
+    <title>个人博客-基础功能版</title>
     <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <div id="bloglist">
       <!--博文列表-->
-      <div style="border:1px solid #db820d;margin: 5px;padding: 3px;" v-for="(item,index) in blogList" :key="'bloglist'+index">
-        <span @click="showBlog(item.id)" style="cursor:pointer;">{{item.title}}</span><br>
-        {{item.addTime}}<br>
-        {{item.introduction}}<br>
-        人气：{{item.viewCount}} 点赞：{{item.agreeCount}}<br>
+      <div style="border:1px solid #db820d;margin: 5px;padding: 3px;" 
+        v-for="(item,index) in blogList"
+        :key="'bloglist'+index">
+          <span @click="showBlog()">{{item.title}}</span><br>
+          {{item.addTime}}<br>
+          {{item.introduction}}<br>
+          人气：{{item.viewCount}} 点赞：{{item.agreeCount}}<br>
       </div>
       <input type="button" value="写博客" @click="showSendBlog" />
-    </div>
-    <div id="SendBlog">
+   
       <div v-show="isShow">
         <!--发博客-->
         发博客<br>
@@ -31,17 +33,19 @@
     </div>
 
     <div id="blog">
-      <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
+      <div v-show="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
         <!--博文详细-->
-        {{blog.title}}<br>
-        {{blog.addTime}}<br>
-        <p v-html="blog.concent"></p>
-        {{blog.concent}}<br>
-        {{blog.viewCount}}<br>
-        {{blog.agreeCount}}<br>
+        {{blogInfo.title}}<br>
+        {{blogInfo.addTime}}<br>
+        <p v-html="blogInfo.concent"></p>
+        {{blogInfo.concent}}<br>
+        {{blogInfo.viewCount}}<br>
+        {{blogInfo.agreeCount}}<br>
       </div>
+    </div>  
+    <div id="DiscussList">
       <hr>
-      <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;"
+      <div v-show="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;"
           v-for="(item,index) in discussList" :key="'discusslist'+index">
         <!--讨论列表-->
         {{index+1}}楼：
@@ -49,10 +53,10 @@
         <p v-html="item.concent"></p>
         点赞：{{item.agreeCount}}<br>
       </div>
-      <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
+      <div v-show="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
         发讨论<br>
-        昵称：<input v-model="discuss.discusser" type="text"/> <br>
-        内容：<textarea v-model="discuss.concent" cols="50" rows="5"></textarea> <br>
+        昵称：<input v-model="discussForm.discusser" type="text"/> <br>
+        内容：<textarea v-model="discussForm.concent" cols="50" rows="5"></textarea> <br>
         <input type="button" value="提交讨论" @click="submit">
       </div>
     </div>
@@ -64,7 +68,6 @@
         return {
           blogList:[ // 演示数据
             {
-              id:1,
               title: '这是一个博客',
               addTime: '2020-10-15',
               introduction: '这是博客简介',
@@ -72,7 +75,6 @@
               agreeCount: 1
             },
             {
-              id:2,
               title: '这是第二个博客',
               addTime: '2020-10-16',
               introduction: '这还是博客的简介',
@@ -86,33 +88,26 @@
         showSendBlog() {
           // 显示写博文的div
           vmBlog.isShow = false
-          vmSendBlog.isShow = true
+          this.isShow = true
         },
-        showBlog(id) {
-          // 依据博客ID，加载博客内容和讨论列表
+        showBlog() {
           // 显示写博文和讨论的div
-          vmBlog.bolgId = id
           vmBlog.isShow = true
-          vmSendBlog.isShow = false
+          this.isShow = false
+        },
+        getBlog() {
+          // 到后端获取博文列表，略
         },
         reload(newBlog) {
-          // 重新加载博文列表
+          // 重新加载博文列表，前端演示用。
           this.blogList.push(newBlog)
-        },
-        greet(event) {
-          // `this` 内部 `methods` 指向当前活动实例
-          // alert(antd)
-          // `event` 是原生 DOM event
-          if (event) {
-              alert(event.target.tagName)
-          }
         }
       }
     }
-    const vmBlogList = Vue.createApp(BlogList).mount('#bloglist')
-
+    
     // 发博文
     const SendBlog = {
+      mixins: [BlogList],
       data() {
         return {
           isShow:false,
@@ -134,30 +129,37 @@
             agreeCount: 1
           }
           // 调用 BlogList 的 reload 事件刷新博文列表
-          vmBlogList.reload(newBlog)
+          this.reload(newBlog)
         }
       }
     }
-    const vmSendBlog = Vue.createApp(SendBlog).mount('#SendBlog')
+    const vmSendBlog = Vue.createApp(SendBlog).mount('#bloglist')
 
-    // 博文内容和讨论
+    // 博文详细内容
     const Blog = {
       data() {
         return {
           isShow:false,
-          bolgId:1,
-          blog:{  // 演示数据
-            title: '这是一个博客',
+          blogInfo:{  // 博文详细信息
+            title: '这是一个博文标题',
             addTime: '2020-10-15',
-            concent: '这是博客的详细内容<br>第二行',
+            concent: '这是博文的详细内容<br>第二行',
             viewCount: 1,
             agreeCount: 1
-          },
-          discuss:{  // 演示数据
-            discusser: '这是一个博客',
-            concent: '这是博客的详细内容<br>第二行'
-          },
-          discussList:[  // 演示数据
+          }
+        }
+      },
+      methods: {
+      }
+    }
+    const vmBlog = Vue.createApp(Blog).mount('#blog')
+ 
+    // 讨论列表和发讨论
+    const DiscussList = {
+      mixins: [Blog],
+      data() {
+        return {
+          discussList:[  // 演示数据，讨论列表
             {
               discusser:'jyk',
               addTime: '2020-10-15',
@@ -179,34 +181,41 @@
           ]
         }
       },
-      created:function () {
-        // 依据bolgId 获取博文内容和讨论列表
-        alert(this.bolgId)
-      },
-      watch: {
-        bolgId: function(newId, oldId) {
-          // 依据bolgId 获取博文内容和讨论列表
-          alert(newId)
-        }
-      },
       methods: {
-        // 提交讨论
-        submit(){
-          let newDiscuss = {
-            discusser: this.discuss.discusser,
-            addTime: '2020-10-16',
-            concent: this.discuss.concent,
-            agreeCount: 1
-          }
-          this.reload(newDiscuss)
-        },
         reload(newDiscuss) {
           // 重新加载讨论列表
           this.discussList.push(newDiscuss)
         }
       }
     }
-    const vmBlog = Vue.createApp(Blog).mount('#blog')
+    const vmDiscussList = Vue.createApp(DiscussList).mount('#blog')
+ 
+    // 发讨论
+    const DiscussForm = {
+      mixins: [DiscussList],
+      data() {
+        return {
+          discussForm:{  // 表单，提交讨论用
+            discusser: '这是一个博客',
+            concent: '这是博客的详细内容<br>第二行'
+          }
+        }
+      },
+      methods: {
+        // 提交讨论
+        submit(){
+          // 演示用，不是提交给后端的数据
+          let newDiscuss = {
+            discusser: this.discussForm.discusser,
+            addTime: '2020-10-16',
+            concent: this.discussForm.concent,
+            agreeCount: 1
+          }
+          this.reload(newDiscuss)
+        }
+      }
+    }
+    const vmDiscussForm = Vue.createApp(DiscussForm).mount('#blog')
  
   </script>
 </body>

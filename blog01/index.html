@@ -18,8 +18,7 @@
         人气：{{item.viewCount}} 点赞：{{item.agreeCount}}<br>
       </div>
       <input type="button" value="写博客" @click="showSendBlog" />
-    </div>
-    <div id="SendBlog">
+   
       <div v-show="isShow">
         <!--发博客-->
         发博客<br>
@@ -84,31 +83,20 @@
         showSendBlog() {
           // 显示写博文的div
           vmBlog.isShow = false
-          vmSendBlog.isShow = true
+          this.isShow = true
         },
         showBlog() {
           // 显示写博文和讨论的div
           vmBlog.isShow = true
-          vmSendBlog.isShow = false
+          this.isShow = false
         },
         reload(newBlog) {
           // 重新加载博文列表
-          console.log(this.blogList)
-          alert(newBlog.title)
           this.blogList.push(newBlog)
-        },
-        greet(event) {
-          // `this` 内部 `methods` 指向当前活动实例
-          // alert(antd)
-          // `event` 是原生 DOM event
-          if (event) {
-              alert(event.target.tagName)
-          }
         }
       }
     }
-    const vmBlogList = Vue.createApp(BlogList).mount('#bloglist')
-
+    
     // 发博文
     const SendBlog = {
       mixins: [BlogList],
@@ -133,11 +121,11 @@
             agreeCount: 1
           }
           // 调用 BlogList 的 reload 事件刷新博文列表
-          vmBlogList.reload(newBlog)
+          this.reload(newBlog)
         }
       }
     }
-    const vmSendBlog = Vue.createApp(SendBlog).mount('#SendBlog')
+    const vmSendBlog = Vue.createApp(SendBlog).mount('#bloglist')
 
     // 博文内容和讨论
     const Blog = {

@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>个人博客</title>
     <script src="https://unpkg.com/vue@next"></script>
+    <script src="../script/antdv/antd.js"></script>
+    <link rel="stylesheet" href="../script/antdv/antd.css">
   </head>
   <body>
     <div id="bloglist">
@@ -17,17 +19,27 @@
         {{item.introduction}}<br>
         人气：{{item.viewCount}} 点赞：{{item.agreeCount}}<br>
       </div>
-      <input type="button" value="写博客" @click="showSendBlog" />
+      <a-button type="primary" @click="showSendBlog">
+        写博客
+      </a-button>
     </div>
     <div id="SendBlog">
-      <div v-show="isShow">
-        <!--发博客-->
-        发博客<br>
-        标题：<input v-model="blog.title" type="text"/> <br>
-        简介：<br><textarea v-model="blog.introduction"  cols="50" rows="5"></textarea> <br>
-        内容：<br><textarea v-model="blog.concent"  cols="50" rows="10"></textarea> <br>
-        <input type="button" value="提交博客" @click="submit">
-      </div>
+      <a-modal v-model:visible="isShow" title="发博客" @ok="handleOk">
+        <template v-slot:footer>
+          <a-button key="back" @click="handleCancel">
+            返回
+          </a-button>
+          <a-button key="submit" type="primary" :loading="loading" @click="submit">
+            提交博文
+          </a-button>
+        </template>
+        <p><div>
+          <!--发博客-->
+          标题：<input v-model="blog.title" type="text"/> <br>
+          简介：<br><textarea v-model="blog.introduction"  cols="50" rows="5"></textarea> <br>
+          内容：<br><textarea v-model="blog.concent"  cols="50" rows="10"></textarea> <br>
+        </div></p>
+      </a-modal>
     </div>
 
     <div id="blog">
@@ -42,19 +54,20 @@
       </div>
       <hr>
       <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;"
-          v-for="(item,index) in discussList" :key="'discusslist'+index">
+          v-for="(item,index) in blog.discussList" :key="'discusslist'+index">
         <!--讨论列表-->
         {{index+1}}楼：
-        {{item.discusser}} 在 {{item.addTime}} 说：<br>
+        {{item.discusser}} 在 {{item.addTime}} 说： 
         <p v-html="item.concent"></p>
         点赞：{{item.agreeCount}}<br>
       </div>
-      <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
-        发讨论<br>
-        昵称：<input v-model="discuss.discusser" type="text"/> <br>
-        内容：<textarea v-model="discuss.concent" cols="50" rows="5"></textarea> <br>
-        <input type="button" value="提交讨论" @click="submit">
-      </div>
+        <div v-if="isShow" style="border:1px solid #db820d;margin: 5px;padding: 3px;" >
+          发讨论<br>
+          昵称：<input v-model="discuss.discusser" type="text"/> <br>
+          内容：<textarea v-model="discuss.concent" cols="50" rows="5"></textarea> <br>
+          <input type="button" value="提交讨论" @click="submit">
+        </div>
+      </a-drawer>
     </div>
  
   <script type="text/javascript">
@@ -109,7 +122,7 @@
         }
       }
     }
-    const vmBlogList = Vue.createApp(BlogList).mount('#bloglist')
+    const vmBlogList = Vue.createApp(BlogList).use(antd).mount('#bloglist')
 
     // 发博文
     const SendBlog = {
@@ -138,55 +151,94 @@
         }
       }
     }
-    const vmSendBlog = Vue.createApp(SendBlog).mount('#SendBlog')
+    const vmSendBlog = Vue.createApp(SendBlog).use(antd).mount('#SendBlog')
 
     // 博文内容和讨论
     const Blog = {
       data() {
         return {
           isShow:false,
-          bolgId:1,
-          blog:{  // 演示数据
-            title: '这是一个博客',
-            addTime: '2020-10-15',
-            concent: '这是博客的详细内容<br>第二行',
+          bolgId:0,
+          discuss:{  // 绑定讨论表单
+            discusser: '', // 讨论人昵称
+            concent: '' // 讨论内容
+          },
+          blog:{
+            title: '加载中...',
+            addTime: '',
+            concent: '',
             viewCount: 1,
-            agreeCount: 1
+            agreeCount: 1,
+            discussList:[
+              {
+                discusser:'jyk1',
+                addTime: '2020-10-15',
+                concent: '这个博客写的不错<br>第二行',
+                agreeCount: 1
+              }
+            ]
           },
-          discuss:{  // 演示数据
-            discusser: '这是一个博客',
-            concent: '这是博客的详细内容<br>第二行'
-          },
-          discussList:[  // 演示数据
-            {
-              discusser:'jyk',
+          blogs:{
+            blog1:{  // 演示数据
+              title: '这是一个博客',
               addTime: '2020-10-15',
-              concent: '这个博客写的不错<br>第二行',
-              agreeCount: 1
+              concent: '这是博客的详细内容<br>第二行',
+              viewCount: 1,
+              agreeCount: 1,
+              discussList:[
+                {
+                  discusser:'jyk1',
+                  addTime: '2020-10-15',
+                  concent: '这个博客写的不错<br>第二行',
+                  agreeCount: 1
+                },
+                {
+                  discusser:'jyk1',
+                  addTime: '2020-10-15',
+                  concent: '这也行？那我也能写<br>第二行',
+                  agreeCount: 1
+                },
+                {
+                  discusser:'jyk1',
+                  addTime: '2020-10-15',
+                  concent: '对对，大家一起来写博客<br>第二行',
+                  agreeCount: 1
+                }
+              ]
             },
-            {
-              discusser:'jyk',
+            blog2:{  // 演示数据
+              title: '这是第二个博客',
               addTime: '2020-10-15',
-              concent: '这也行？那我也能写<br>第二行',
-              agreeCount: 1
-            },
-            {
-              discusser:'jyk',
-              addTime: '2020-10-15',
-              concent: '对对，大家一起来写博客<br>第二行',
-              agreeCount: 1
+              concent: '这是博客的详细内容<br>第二行',
+              viewCount: 1,
+              agreeCount: 1,
+              discussList:[
+                {
+                  discusser:'jyk2',
+                  addTime: '2020-10-15',
+                  concent: '这个博客写的不错<br>第二行',
+                  agreeCount: 1
+                },
+                {
+                  discusser:'jyk2',
+                  addTime: '2020-10-15',
+                  concent: '这也行？那我也能写<br>第二行',
+                  agreeCount: 1
+                }
+              ]
             }
-          ]
+          }
         }
       },
       created:function () {
         // 依据bolgId 获取博文内容和讨论列表
-        alert(this.bolgId)
+        // alert(this.bolgId)
       },
       watch: {
         bolgId: function(newId, oldId) {
           // 依据bolgId 获取博文内容和讨论列表
-          alert(newId)
+          // alert(newId)
+          this.blog = this.blogs['blog' + newId]
         }
       },
       methods: {
@@ -202,11 +254,11 @@
         },
         reload(newDiscuss) {
           // 重新加载讨论列表
-          this.discussList.push(newDiscuss)
+          this.blog.discussList.push(newDiscuss)
         }
       }
     }
-    const vmBlog = Vue.createApp(Blog).mount('#blog')
+    const vmBlog = Vue.createApp(Blog).use(antd).mount('#blog')
  
   </script>
 </body>
