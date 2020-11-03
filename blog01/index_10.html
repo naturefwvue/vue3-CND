@@ -9,12 +9,20 @@
     <script src="https://unpkg.com/vue@next"></script>
   </head>
   <body>
-    <div id="bloglist">
+    
+    <div id="group" style="float: right;">
+      查询：<input type="search" value="" placeholder="可以写查询条件"> <br>
+      <template v-for="(item,index) in groupList" :key="'group'+index">
+        <span @click="showBlogList({groupId:item.id})" style="cursor: pointer;">{{item.title}}</span><br>
+        {{item.introduction}}<hr>
+      </template>
+    </div>
+    <div id="bloglist" style="width: 700px;">
       <!--博文列表-->
       <div style="border:1px solid #db820d;margin: 5px;padding: 3px;" 
         v-for="(item,index) in blogList"
         :key="'bloglist'+index">
-          <span @click="showBlog()">{{item.title}}</span><br>
+          <span @click="showBlog(item.id)" style="cursor: pointer;">{{item.title}}</span><br>
           {{item.addTime}}<br>
           {{item.introduction}}<br>
           人气：{{item.viewCount}} 点赞：{{item.agreeCount}}<br>
@@ -64,6 +72,30 @@
     </div>
  
   <script type="text/javascript">
+  // 博文分组
+  const GroupList = {
+      data() {
+        return {
+          groupList:[ // 演示数据
+            {
+              title: '前端Vue',
+              introduction: '这是博客简介'
+            },
+            {
+              title: '前端React',
+              introduction: '这还是博客的简介'
+            }
+          ]
+        }
+      },
+      methods: {
+        showSendBlog(query) {
+          // 判断有没有查询关键字，有的话就是查询，没有的话就是按组查询
+        }
+      }
+    }
+    const vmGroupList = Vue.createApp(GroupList).mount('#group')
+
     // 博文列表
     const BlogList = {
       data() {
@@ -92,13 +124,11 @@
           vmBlog.isShow = false
           this.isShow = true
         },
-        showBlog() {
+        showBlog(id) {
+          // 依据博文ID，到后端申请博文数据和讨论数据，暂略
           // 显示写博文和讨论的div
           vmBlog.isShow = true
           this.isShow = false
-        },
-        getBlog() {
-          // 到后端获取博文列表，略
         },
         reload(newBlog) {
           // 重新加载博文列表，前端演示用。

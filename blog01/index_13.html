@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="../script/antdv/antd.css">
   </head>
   <body>
+    <div id="test">呜呜呜
+      <blog-post></blog-post>
+    </div>
     <div id="bloglist">
       <!--博文列表-->
       <div style="border:1px solid #db820d;margin: 5px;padding: 3px;" 
@@ -112,12 +115,12 @@
   <script type="text/javascript">
     const app = Vue.createApp({})
 
-    app.component('blog-post', {
+    Vue.component('blog-post', {
       
-      template: `<h4>sss</h4>`
+      template: `<h4>sss4444</h4>`
     })
 
-    app.mount('#bloglist')
+    app.mount('#test')
 
     // 博文列表
     const BlogList = {
